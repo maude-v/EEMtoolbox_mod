@@ -8,8 +8,11 @@ add_introduced_species <- function(native_parameters,
   #get the number of native species
   n_native <- length(native_parameters[[1]]$growthrates)
   extended_parameters <-
-    lapply(native_parameters,
-           function(x) {
+    lapply(seq_along(native_parameters),
+           function(i) {
+             x <- native_parameters[[i]]
+             r_native <- x$growthrates #new
+             A <- x$interaction_matrix #new
              #sample the introduced species growth rates
              introduced_growth_rate <-
                runif(1,
@@ -18,65 +21,55 @@ add_introduced_species <- function(native_parameters,
              #sample interactions between natives and introduced species
              introduced_col <-
                sapply(seq_len(n_native),
-                      function(i) {
-                        if (introduced_col_signs[i] != 0) {
-                          introduced_col_signs[i]*runif(1)
-                        } else {
-                          0
-                        }
+                      function(j) {
+                        ifelse(introduced_col_signs[j] != 0,
+                               introduced_col_signs[j] * runif(1),
+                               0)
                       })
              introduced_row <-
                sapply(seq_len(n_native),
-                      function(i) {
-                        if (introduced_row_signs[i] != 0) {
-                          introduced_row_signs[i]*runif(1)
-                        } else{
-                          0
-                        }
+                      function(j) {
+                        ifelse(introduced_row_signs[j] != 0,
+                               introduced_row_signs[j] * runif(1),
+                               0)
                       })
-             #compute the self interaction of the introduced species
-             ## -> we need to compute the required self-interaction to ensure
-             ##that the introduced species's equilibrium value is K
-             ## --> we need introduced_growth_rate + native_effect + introduced_self * introduced_k = 0
-             ## --> introduced_self = -(introduced _growth_rate + native_effect)/introduced_k
-             ## the native_effect is the sum of the effects from natives on the
-             ## introduced species, calculated as
-             ## sum_{j=1}^{n_native} (introduced_row[j]*native_eq[j]))
-             ## native_eq is the native equilibrium values of the system
-             native_eq <- solve(x$interaction_matrix, -x$growthrates)
-             native_effect <- sum(introduced_row*native_eq)
-             introduced_self <- -(introduced_growth_rate + native_effect)/introduced_k
-             if (sign(introduced_self_sign) != sign(introduced_self)){
-               print("The introduced self interaction sign is not consistent with
-                    the required equilibrium value")
+
+             # Compute self‐interaction for full system equilibrium = k
+             invA <- solve(A)   # A^{-1}
+             vec <- (r_native + introduced_col * introduced_k)
+             numerator <- as.numeric(introduced_row %*% (invA %*% vec)) - introduced_growth_rate
+             introduced_self <- numerator / introduced_k
+
+             # Check that the sign is as desired:
+             if (sign(introduced_self) != sign(introduced_self_sign)) {
+               cat("Introduced self-interaction sign of parameter set", i, "does not match the desired sign.\n")
              }
-             extended_growthrates <- c(x$growthrates, introduced_growth_rate)
+             extended_growthrates <- c(introduced_growth_rate, r_native)
              extended_interaction_matrix <-
                matrix(0, nrow = n_native + 1, ncol = n_native + 1)
-             extended_interaction_matrix[2:(n_native+1), 2:(n_native+1)] <-
-               x$interaction_matrix
-             extended_interaction_matrix[2:(n_native+1), 1] <-
-               introduced_col
-             extended_interaction_matrix[1, 2:(n_native+1)] <-
-               introduced_row
-             extended_interaction_matrix[1, 1] <-
-               introduced_self
-             if (is.null(colnames(x$interaction_matrix)) == FALSE) {
+             extended_interaction_matrix[2:(n_native + 1), 2:(n_native + 1)] <-
+               A
+             extended_interaction_matrix[2:(n_native + 1), 1] <- introduced_col
+             extended_interaction_matrix[1, 2:(n_native + 1)] <- introduced_row
+             extended_interaction_matrix[1, 1] <- introduced_self
+             if (!is.null(colnames(A))) {
                colnames(extended_interaction_matrix) <-
-                 c("Introduced species", colnames(x$interaction_matrix))
+                 c("Introduced species", colnames(A))
              } else {
                colnames(extended_interaction_matrix) <-
-                 c("Introduced species", c(1:ncol(x$interaction_matrix)))
+                 c("Introduced species", seq_len(ncol(A)))
              }
-             if (is.null(rownames(x$interaction_matrix)) == FALSE) {
+             if (!is.null(rownames(A))) {
                rownames(extended_interaction_matrix) <-
-                 c("Introduced species", rownames(x$interaction_matrix))
+                 c("Introduced species", rownames(A))
              } else {
                rownames(extended_interaction_matrix) <-
-                 c("Introduced species", c(1:ncol(x$interaction_matrix)))
+                 c("Introduced species", seq_len(nrow(A)))
              }
              return(list(growthrates = extended_growthrates,
                          interaction_matrix = extended_interaction_matrix))
            })
+  # Filter out parameter sets that returned NULL
+  extended_parameters <- extended_parameters[!sapply(extended_parameters, is.null)]
   return(extended_parameters)
 }

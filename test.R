@@ -1,379 +1,348 @@
-## =============================================================================
-## 1. Build the equilibrium ecosystem
-## =============================================================================
-interaction_matrix_nosihek <- matrix(c(-1, 0, -1, 0, 0, 0, 0, 1,
-                                       0, -1, -1, 0, 0, 0, 0, 1,
-                                       1, 1, -1, 0, 0, 1, 1, 0,
-                                       0, 0, 0, -1, 1, 1, 1, 0,
-                                       0, 0, 0, -1, -1, 0, 1, 0,
-                                       0, 0, -1, -1, 0, -1, 0, 1,
-                                       0, 0, -1, -1, -1, 0, -1, 1,
-                                       1, -1, -1, 0, 0, 0, 1, -1),
-                                     ncol = 8, nrow = 8, byrow = TRUE)
+## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+## 1. Build the equilibrium ecosystem ####
+## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+species_eq <- c("seabirds",
+                "terrestrial crabs",
+                "carnivorous crabs",
+                "cane spiders",
+                "geckos",
+                "cockroaches",
+                "terrestrial arthropods",
+                "native trees")
 
-upper_bounds_growth_rate_nosihek = c(1.1, 1.5, 1.5, 0.39, 0.49, 3.0, 3.0, 3.0)
+interaction_matrix_eq <- matrix(c(-1, 0,-1, 0, 0, 0, 0, 1,
+                                   0,-1,-1, 0, 0, 0, 0, 1,
+                                   1, 1,-1, 0, 0, 1, 1, 0,
+                                   0, 0, 0,-1, 1, 1, 1, 0,
+                                   0, 0, 0,-1,-1, 0, 1, 0,
+                                   0, 0,-1,-1, 0,-1, 0, 1,
+                                   0, 0,-1,-1,-1, 0,-1, 1,
+                                   1,-1,-1, 0, 0, 0, 1,-1),
+                                ncol = 8, nrow = 8,
+                                dimnames = list(species_eq, species_eq),
+                                byrow = TRUE)
 
-test_EEM_eq <- EEM(interaction_matrix_nosihek,
-                   upper_bounds_growth_rate = upper_bounds_growth_rate_nosihek,
-                   algorithm = "SMC-EEM",
-                   disc_func = function(data) {
-                     adapted_discrepancy_continuous_sum(
-                       data,
-                       target_lower = c(500/200000000, #1
-                                        10000/200000000, #2
-                                        500/200000000, #3
-                                        1000/200000000, #4
-                                        10000/200000000, #5
-                                        1000000/200000000, #6
-                                        1000000/200000000, #7
-                                        100000/200000000), #8
-                       target_upper = c(5000/200000000, #1
-                                        90000/200000000, #2
-                                        1500/200000000, #3
-                                        10000/200000000, #4
-                                        90000/200000000, #5
-                                        90000000/200000000, #6
-                                        90000000/200000000, #7
-                                        900000/200000000)) #8
-                   },
-                   n_ensemble = 5000,
-                   n_cores = 3)
+upper_gr_eq <- c(1.1, 1.5, 1.5, 0.39, 0.49, 3.0, 3.0, 3.0)
 
-save(test_EEM_eq, file = "test_EEM_eq.RData")
+divider <- 100000
+
+lower_100m2 <- c(30, #"seabirds",
+                 200, #"terrestrial crabs",
+                 20, #"carnivorous crabs",
+                 100, #"cane spiders",
+                 300, #"geckos",
+                 900, #"cockroaches",
+                 50000, #"terrestrial arthropods",
+                 30)/divider #"native trees"
+
+upper_100m2 <- c(70, #"seabirds",
+                 400, #"terrestrial crabs",
+                 40, #"carnivorous crabs",
+                 400, #"cane spiders",
+                 500, #"geckos",
+                 1500, #"cockroaches",
+                 150000, #"terrestrial arthropods",
+                 50)/divider #"native trees" ---> all per 100 m^2
+
+EEM_eq <- EEM(interaction_matrix_eq,
+              upper_bounds_growth_rate = upper_gr_eq,
+              algorithm = "SMC-EEM",
+              disc_func = function(data) {
+                adapted_discrepancy_continuous_sum(
+                  data,
+                  target_lower = c(30, #"seabirds",
+                                   200, #"terrestrial crabs",
+                                   20, #"carnivorous crabs",
+                                   100, #"cane spiders",
+                                   300, #"geckos",
+                                   900, #"cockroaches",
+                                   50000, #"terrestrial arthropods",
+                                   30)/100000, #"native trees",
+                  target_upper = c(70, #"seabirds",
+                                   400, #"terrestrial crabs",
+                                   40, #"carnivorous crabs",
+                                   400, #"cane spiders",
+                                   500, #"geckos",
+                                   1500, #"cockroaches",
+                                   150000, #"terrestrial arthropods",
+                                   50)/100000) #"native trees"
+              },
+              n_ensemble = 5000,
+              n_cores = 3)
+
+save(EEM_eq, file = "EEM_eq.RData")
 
 source("add_species_names.R")
 
-test_EEM_eq <- add_species_names(test_EEM_eq,
-                                 c("seabirds",
-                                   "terrestrial crabs",
-                                   "carnivorous crabs",
-                                   "cane spiders",
-                                   "geckos",
-                                   "cockroaches",
-                                   "terrestrial arthropods",
-                                   "native trees"))
+EEM_eq <- add_species_names(EEM_eq,
+                            c("seabirds",
+                              "terrestrial crabs",
+                              "carnivorous crabs",
+                              "cane spiders",
+                              "geckos",
+                              "cockroaches",
+                              "terrestrial arthropods",
+                              "native trees"))
 
-save(test_EEM_eq, file = "test_EEM_eq.RData")
+save(EEM_eq, file = "test_EEM_eq.RData")
 
-## =============================================================================
-## 2. check whether the equilibrium values are between the upper and lower bounds
-## =============================================================================
+## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+## 1a. try with function inside directly ####
+## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-test_arg <- args_function(interaction_matrix = interaction_matrix_nosihek,
-                          upper_bounds_growth_rate =
-                            upper_bounds_growth_rate_nosihek,
-                          model = "GLV")
+source("adapted_discrepancy_continuous_sum_inline.R")
+
+EEM_inline_eq <- EEM(interaction_matrix_eq,
+                     upper_bounds_growth_rate = upper_gr_eq,
+                     algorithm = "SMC-EEM",
+                     disc_func = function(data) {
+                       adapted_discrepancy_continuous_sum_inline(
+                         target_lower = c(30, #"seabirds",
+                                          200, #"terrestrial crabs",
+                                          20, #"carnivorous crabs",
+                                          100, #"cane spiders",
+                                          300, #"geckos",
+                                          900, #"cockroaches",
+                                          50000, #"terrestrial arthropods",
+                                          30)/100000, #"native trees",
+                         target_upper = c(70, #"seabirds",
+                                          400, #"terrestrial crabs",
+                                          40, #"carnivorous crabs",
+                                          400, #"cane spiders",
+                                          500, #"geckos",
+                                          1500, #"cockroaches",
+                                          150000, #"terrestrial arthropods",
+                                          50)/100000) #"native trees"
+                     },
+                     n_ensemble = 5000,
+                     n_cores = 3)
+
+## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+## 2. check if equilibrium values are between upper and lower bounds  ####
+## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 source("select_EEM_outputs.R")
 
-test_target_lower <- c(500/200000000, #1
-                       10000/200000000, #2
-                       500/200000000, #3
-                       1000/200000000, #4
-                       10000/200000000, #5
-                       1000000/200000000, #6
-                       1000000/200000000, #7
-                       100000/200000000) #8
-
-test_target_upper <- c(5000/200000000, #1
-                       90000/200000000, #2
-                       1500/200000000, #3
-                       10000/200000000, #4
-                       90000/200000000, #5
-                       90000000/200000000, #6
-                       90000000/200000000, #7
-                       900000/200000000) #8
-
-test_EEM_outputs <- select_EEM_outputs(ensemble = test_EEM_eq,
-                                       target_lower = test_target_lower, #8
-                                       target_upper = test_target_upper,
-                                       sim_args = test_arg)
+EEM_outputs_eq <- select_EEM_outputs(ensemble = EEM_eq,
+                                     target_lower = lower_100m2,
+                                     target_upper = upper_100m2)
 
 #it works
 
-## =============================================================================
-## 3. plot projections without sihek
-## =============================================================================
-test_EEM_eq_short <- test_EEM_eq[1:5]
+## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+## 3. plot projections native system, scaled  ####
+## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+EEM_eq_short <- EEM_eq[1:5]
 
 source("adapted_calculate_projections.R")
 source("adapted_ode_solve.R")
 
-mean_eq <- (test_target_upper + test_target_lower) / 2
+mean_eq <- (upper_100m2 + lower_100m2) / 2
 
-species_names_eq <- colnames(test_EEM_eq_short[[1]]$interaction_matrix)
-
-test_eq_projections <-
-  adapted_calculate_projections(test_EEM_eq_short,
-                                initial_condition = mean_eq,
+eq_projections_scaled <-
+  adapted_calculate_projections(EEM_eq_short,
+                                initial_condition = rep(1, length(species_eq)),
                                 t_window = c(0, 20),
-                                scaled = FALSE,
-                                species_names = species_names_eq)
+                                scaled = TRUE,
+                                species_names = species_eq,
+                                multiplier = divider)
 
-library(ggplot2)
-library(dplyr)
+source("adapted_plot_projections.R")
 
-test_abundance_eq <- group_by(test_eq_projections,
-                              time,
-                              species)
-test_abundance_eq <- summarise(test_abundance_eq,
-                               median_pop = median(pop),
-                               upper = quantile(pop, 0.975),
-                               lower = quantile(pop, 0.025))
+plot_eq_scaled <- adapted_plot_projections(projections = eq_projections_scaled,
+                                           title = " Projections native
+                                           system, scaled")
 
-#basic plot
-test_plot_eq <- ggplot(test_abundance_eq) +
-  guides(fill = guide_legend(title = "Species"),
-         color = guide_legend(title = "Species")) +
-  xlab("Time") +
-  ylab("Abundance") +
-  facet_wrap( ~ species, scales = "free") +
-  geom_ribbon(aes(x = time,
-                  ymin = lower,
-                  ymax = upper,
-                  color = species,
-                  fill = species),
-              alpha = 0.1,
-              linewidth = 0.2) +
-  geom_line(aes(x = time, y = median_pop, color = species),
-            linewidth = 0.8) +
-  ggtitle("Projections without sihek") +
-  ylim(c(0, 1)) +
-  theme_bw()
+#it works
 
-## =============================================================================
-## 4. add sihek
-## =============================================================================
+## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+## 4. plot projections native system, not scaled  ####
+## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+mean_eq <- (upper_100m2 + lower_100m2) / 2
+
+eq_projections <- adapted_calculate_projections(EEM_eq_short,
+                                                initial_condition = mean_eq,
+                                                t_window = c(0, 20),
+                                                scaled = FALSE,
+                                                species_names = species_eq,
+                                                multiplier = divider)
+
+source("adapted_plot_projections.R")
+
+plot_eq <- adapted_plot_projections(projections = eq_projections,
+                                    title = "Projections native system")
+
+#it works
+
+## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+## 5. add sihek  ####
+## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 source("add_introduced_species.R")
 
-test_EEM_intro <-
-  add_introduced_species(native_parameters = test_EEM_eq_short,
+EEM_sihek <-
+  add_introduced_species(native_parameters = EEM_eq_short,
                          introduced_lower_bound_growth_rate = 0,
                          introduced_upper_bound_growth_rate = 1.1,
                          introduced_self_sign = -1,
-                         introduced_row_signs = c(1, 1, 1, 1, 1, 1, 1, 1),
-                         introduced_col_signs = c(-1, -1, -1, -1, -1, -1, -1, 0),
-                         introduced_k = 40/200000000)
+                         introduced_row_signs =
+                           c(1, 1, 1, 1, 1, 1, 1, 1),
+                         introduced_col_signs =
+                           c(-1, -1, -1, -1, -1, -1, -1, 0),
+                         introduced_k = 0.002/divider) #40/200ha = 0.002/100m^2
 
-## =============================================================================
-## 5. plot projections with sihek but without artificial recruitment
-## =============================================================================
+## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+## 6. check if equilibrium values are between upper and lower bounds ####
+## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-mean_intro <- c(9/200000000, mean_eq)
+EEM_outputs_sihek <- select_EEM_outputs(ensemble = EEM_sihek,
+                                        target_lower = c(0.001/divider,
+                                                         lower_100m2),
+                                        target_upper = c(0.003/divider,
+                                                         upper_100m2),
+                                        mode = "disturbed")
 
-species_names_intro <- c("sihek",
-                         colnames(test_EEM_eq_short[[1]]$interaction_matrix))
+## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+## 7. plot projections with sihek but without artificial recruitment ####
+## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-test_intro_projections <-
-  adapted_calculate_projections(test_EEM_intro,
-                                initial_condition = mean_intro,
+mean_sihek <- c(0.0045, mean_eq) #9/200ha = 0.00045/100m^2
+
+species_sihek <- c("sihek", species_eq)
+
+source("adapted_calculate_projections.R")
+source("adapted_ode_solve.R")
+sihek_projections <-
+  adapted_calculate_projections(EEM_sihek,
+                                initial_condition = mean_sihek,
                                 t_window = c(0, 20),
                                 scaled = FALSE,
-                                species_names = species_names)
+                                species_names = species_sihek,
+                                multiplier = divider)
 
-library(ggplot2)
-library(dplyr)
+plot_sihek <- adapted_plot_projections(projections = sihek_projections,
+                                      title = "Projections with sihek")
 
-test_abundance_intro <- group_by(test_intro_projections,
-                                 time,
-                                 species)
-test_abundance_intro <- summarise(test_abundance_intro,
-                                  median_pop = median(pop),
-                                  upper = quantile(pop, 0.975),
-                                  lower = quantile(pop, 0.025))
+## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+## 8. plot projections with sihek with artificial recruitment ####
+## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-#basic plot
-test_plot_intro <- ggplot(test_abundance_intro) +
-  guides(fill = guide_legend(title = "Species"),
-         color = guide_legend(title = "Species")) +
-  xlab("Time") +
-  ylab("Abundance") +
-  facet_wrap( ~ species, scales = "free") +
-  geom_ribbon(aes(x = time,
-                  ymin = lower,
-                  ymax = upper,
-                  color = species,
-                  fill = species),
-              alpha = 0.1,
-              linewidth = 0.2) +
-  geom_line(aes(x = time, y = median_pop, color = species),
-            linewidth = 0.8) +
-  ggtitle("Projections with sihek") +
-  theme_bw()
+mean_sihek_artrec <- c(0, mean_eq)
 
-## =============================================================================
-## 6. plot projections with sihek with artificial recruitment
-## =============================================================================
-
-test_intro_projections_artrec <-
-  adapted_calculate_projections(test_EEM_intro,
-                                initial_condition = mean_intro,
+sihek_projections_artrec <-
+  adapted_calculate_projections(EEM_sihek,
+                                initial_condition = mean_sihek_artrec,
                                 t_window = c(0, 20),
                                 scaled = FALSE,
-                                species_names = species_names_intro,
-                                init_release_amount = 9/200000000,
-                                init_release_timepoints = 1,
-                                sustain_release_amount = 5/200000000,
-                                sustain_release_timepoints = c(3, 5, 7, 9, 11,
-                                                               13, 15, 17, 19),
-                                sustain_release_threshold = 20/200000000,
+                                species_names = species_sihek,
+                                init_intervention_amount = 0.00045/divider, #9/200ha = 0.00045/100m^2
+                                init_intervention_timepoints = c(2,3),
+                                sustain_intervention_amount = 0.00025/divider, #5/200ha = 0.00025/100m^2
+                                sustain_intervention_timepoints = c(3, 5, 7,
+                                                                    9, 11, 13,
+                                                                    15, 17, 19),
+                                sustain_intervention_threshold = 0.001/divider, #20/200ha = 0.001/100m^2
                                 introduced_species_index = 1,
-                                time_step_len = 0.01)
+                                time_step_len = 0.01,
+                                multiplier = divider)
 
-library(ggplot2)
-library(dplyr)
 
-test_abundance_intro_artrec <- group_by(test_intro_projections_artrec,
-                                        time,
-                                        species)
-test_abundance_intro_artrec <- summarise(test_abundance_intro_artrec,
-                                         median_pop = median(pop),
-                                         upper = quantile(pop, 0.975),
-                                         lower = quantile(pop, 0.025))
+plot_sihek_artrec <- adapted_plot_projections(
+  projections = sihek_projections_artrec,
+  title = "Projections with sihek & artificial recruitment")
 
 #add red intercept line
-threshholds <- data.frame(yintercepts = c(20/200000000, 40/200000000),
+threshholds <- data.frame(yintercepts = c(0.001, 0.002),
                           species = "sihek")
 
 #basic plot
-test_plot_intro_artrec <- ggplot(test_abundance_intro_artrec) +
-  guides(fill = guide_legend(title = "Species"),
-         color = guide_legend(title = "Species")) +
-  xlab("Time") +
-  ylab("Abundance") +
-  facet_wrap( ~ species, scales = "free") +
-  geom_ribbon(aes(x = time,
-                  ymin = lower,
-                  ymax = upper,
-                  color = species,
-                  fill = species),
-              alpha = 0.1,
-              linewidth = 0.2) +
-  geom_line(aes(x = time, y = median_pop, color = species),
-            linewidth = 0.8) +
+library(ggplot2)
+plot_sihek_artrec <- plot_sihek_artrec +
   geom_hline(data = threshholds, aes(yintercept = yintercepts),
-             color = "red", linewidth = 0.2) +
-  ggtitle("Projections with sihek & artificial recruitment") +
-  theme_bw()
+             color = "red", linewidth = 0.2)
 
-## =============================================================================
-## 7. compare the three plots
-## =============================================================================
+## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+## 9. compare the three plots ####
+## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 library(gridExtra)
 
-grid.arrange(test_plot_eq, test_plot_intro, test_plot_intro_artrec, ncol = 3)
+grid.arrange(plot_eq, plot_sihek, plot_sihek_artrec, ncol = 3)
 
-## =============================================================================
-## 8.1. change scale of sihek to see impact better
-## =============================================================================
+## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+## 10. add coconut palms to the equilibrium system ####
+## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-test_EEM_intro_high <-
-  add_introduced_species(native_parameters = test_EEM_eq_short,
+source("add_introduced_species.R")
+
+EEM_palm <-
+  add_introduced_species(native_parameters = EEM_eq_short,
                          introduced_lower_bound_growth_rate = 0,
-                         introduced_upper_bound_growth_rate = 1.1,
+                         introduced_upper_bound_growth_rate = 3,
                          introduced_self_sign = -1,
-                         introduced_row_signs = c(1, 1, 1, 1, 1, 1, 1, 1),
-                         introduced_col_signs = c(-1, -1, -1, -1, -1, -1, -1, 0),
-                         introduced_k = 4)
+                         introduced_row_signs = c(1, -1, -1, 1, 1, 1, 1, -1),
+                         introduced_col_signs = rep(-1,8),
+                         introduced_k = 106.5/divider) #2130000/200ha = 106.5/100m^2
 
-test_intro_projections_high <-
-  adapted_calculate_projections(test_EEM_intro_high,
-                                initial_condition = c(1, mean_eq),
-                                t_window = c(0, 20),
+## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+## 11. check if equilibrium values are between upper and lower bounds  ####
+## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+source("select_EEM_outputs.R")
+
+selected_EEM_palms <- select_EEM_outputs(ensemble = EEM_palm,
+                                        target_lower = c(103.5/divider,
+                                                         lower_100m2),
+                                        target_upper = c(110.5/divider,
+                                                         upper_100m2),
+                                        mode = "disturbed")
+
+## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+## 12. plot projections with palm trees and with artificial control ####
+## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+initial_palm <- c(50/divider, mean_eq) #1000000/200ha = 50/100m^2
+
+species_names_palm <- c("palm trees", species_eq)
+
+source("adapted_calculate_projections.R")
+source("adapted_ode_solve.R")
+
+palm_projections <-
+  adapted_calculate_projections(EEM_palm,
+                                initial_condition = initial_palm,
+                                t_window = c(0, 30),
                                 scaled = FALSE,
-                                species_names = species_names)
-
-library(ggplot2)
-library(dplyr)
-
-test_abundance_intro_high <- group_by(test_intro_projections_high,
-                                      time,
-                                      species)
-test_abundance_intro_high <- summarise(test_abundance_intro_high,
-                                       median_pop = median(pop),
-                                       upper = quantile(pop, 0.975),
-                                       lower = quantile(pop, 0.025))
-
-#basic plot
-test_plot_intro_high <- ggplot(test_abundance_intro_high) +
-  guides(fill = guide_legend(title = "Species"),
-         color = guide_legend(title = "Species")) +
-  xlab("Time") +
-  ylab("Abundance") +
-  facet_wrap( ~ species, scales = "free") +
-  geom_ribbon(aes(x = time,
-                  ymin = lower,
-                  ymax = upper,
-                  color = species,
-                  fill = species),
-              alpha = 0.1,
-              linewidth = 0.2) +
-  geom_line(aes(x = time, y = median_pop, color = species),
-            linewidth = 0.8) +
-  ggtitle("Projections with sihek, high K") +
-  theme_bw()
-
-## =============================================================================
-## 8.2. change scale of sihek to see impact better + artificial recruitment
-## =============================================================================
-
-test_intro_projections_artrec_high <-
-  adapted_calculate_projections(test_EEM_intro_high,
-                                initial_condition = c(1, mean_eq),
-                                t_window = c(0, 20),
-                                scaled = FALSE,
-                                species_names = species_names,
-                                init_release_amount = 1,
-                                init_release_timepoints = 1,
-                                sustain_release_amount = 1.5,
-                                sustain_release_timepoints = c(3, 5, 7, 9, 11,
-                                                               13, 15, 17, 19),
-                                sustain_release_threshold = 3,
+                                species_names = species_names_palm,
+                                mode = "removal",
+                                init_intervention_amount = -75/divider, #-1500000/200ha = -75/100m^2
+                                init_intervention_timepoints = c(20,21),
+                                sustain_intervention_amount = -5/divider, #-100000/200ha = -5/100m^2
+                                sustain_intervention_timepoints = c(21.5, 22,
+                                                                    22.5, 23,
+                                                                    23.5, 24,
+                                                                    24.5, 25,
+                                                                    25.5, 26,
+                                                                    26.5, 27,
+                                                                    27.5, 28,
+                                                                    28.5, 29),
+                                sustain_intervention_threshold = 0,
                                 introduced_species_index = 1,
-                                time_step_len = 0.01)
+                                time_step_len = 0.01,
+                                multiplier = divider)
 
-library(ggplot2)
-library(dplyr)
+save(palm_projections, file = "palm_projections.RData")
 
-test_abundance_intro_artrec_high <- group_by(test_intro_projections_artrec_high,
-                                             time,
-                                             species)
-test_abundance_intro_artrec_high <- summarise(test_abundance_intro_artrec_high,
-                                              median_pop = median(pop),
-                                              upper = quantile(pop, 0.975),
-                                              lower = quantile(pop, 0.025))
+plot_palm <- adapted_plot_projections(
+  projections = palm_projections,
+  title = "Projections with palm trees & artificial control")
 
-#add red intercept line
-threshholds_high <- data.frame(yintercepts = c(3, 4),
-                               species = "sihek")
+## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+## 13. Merge palm and sihek introductions ####
+## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
-#basic plot
-test_plot_intro_artrec_high <- ggplot(test_abundance_intro_artrec_high) +
-  guides(fill = guide_legend(title = "Species"),
-         color = guide_legend(title = "Species")) +
-  xlab("Time") +
-  ylab("Abundance") +
-  facet_wrap( ~ species, scales = "free") +
-  geom_ribbon(aes(x = time,
-                  ymin = lower,
-                  ymax = upper,
-                  color = species,
-                  fill = species),
-              alpha = 0.1,
-              linewidth = 0.2) +
-  geom_line(aes(x = time, y = median_pop, color = species),
-            linewidth = 0.8) +
-  geom_hline(data = threshholds, aes(yintercept = yintercepts),
-             color = "red", linewidth = 0.2) +
-  ggtitle("Projections with sihek & artificial recruitment, high K") +
-  theme_bw()
+EEM_palm[1:5]
+EEM_sihek
 
-## =============================================================================
-## 8.3. compare the two plots
-## =============================================================================
 
-library(gridExtra)
-
-grid.arrange(test_plot_intro_high, test_plot_intro_artrec_high, ncol = 2)
