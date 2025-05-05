@@ -184,9 +184,8 @@ adapted_calculate_projections <-
 
     abundance <- lapply(seq_len(length(parameters)),
                         function(i) {
+                          cat("\r","Solving ODE for parameter set", i, "/", length(parameters))
                           setTxtProgressBar(pb, i)
-                          cat("\n Solving ODE for parameter set", i, "/", length(parameters), "\n")
-                          Sys.sleep(0.1)
                           ode_solve_it(parameters[[i]],
                                        model = model,
                                        initial_condition = initial_condition,
