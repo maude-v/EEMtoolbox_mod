@@ -47,11 +47,6 @@ adapted_calculate_projections <-
       sustain_intervention_timepoints <- list(sustain_intervention_timepoints)
     }
 
-    #Create a loading bar object to see where you're at
-    pb <- txtProgressBar(min = 0,
-                         max = length(parameters),
-                         style = 3)
-
     # We'll pass the recruitment schedule via the parameters list.
     # Define the intervention times over the time window:
     recruitment_times <-
@@ -185,7 +180,6 @@ adapted_calculate_projections <-
     abundance <- lapply(seq_len(length(parameters)),
                         function(i) {
                           cat("\r","Solving ODE for parameter set", i, "/", length(parameters))
-                          setTxtProgressBar(pb, i)
                           ode_solve_it(parameters[[i]],
                                        model = model,
                                        initial_condition = initial_condition,
