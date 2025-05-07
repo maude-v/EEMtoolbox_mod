@@ -89,7 +89,7 @@ save(EEM_eq, file = "test_EEM_eq.RData")
 load("EEM_eq.RData")
 
 ## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-## 2. check if equilibrium values are between upper and lower bounds  ####
+## 1.1. check if equilibrium values are between upper and lower bounds  ####
 ## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 source("select_EEM_outputs.R")
@@ -101,7 +101,7 @@ EEM_outputs_eq <- select_EEM_outputs(ensemble = EEM_eq,
 #it works
 
 ## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-## 3. plot projections native system, scaled  ####
+## 1.2. plot projections native system, scaled  ####
 ## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 EEM_eq_short <- EEM_eq[1:5]
 
@@ -111,7 +111,7 @@ source("adapted_ode_solve.R")
 mean_eq <- (upper_100m2 + lower_100m2) / 2
 
 eq_projections_scaled <-
-  adapted_calculate_projections(EEM_eq_short,
+  adapted_calculate_projections(EEM_eq,
                                 initial_condition = rep(1, length(species_eq)),
                                 t_window = c(0, 30),
                                 scaled = TRUE,
@@ -127,12 +127,12 @@ plot_eq_scaled <- adapted_plot_projections(projections = eq_projections_scaled,
 #it works
 
 ## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-## 4. plot projections native system, not scaled  ####
+## 1.3. plot projections native system, not scaled  ####
 ## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 mean_eq <- (upper_100m2 + lower_100m2) / 2
 
-eq_projections <- adapted_calculate_projections(EEM_eq_short,
+eq_projections <- adapted_calculate_projections(EEM_eq,
                                                 initial_condition = mean_eq,
                                                 t_window = c(0, 30),
                                                 scaled = FALSE,
@@ -147,13 +147,13 @@ plot_eq <- adapted_plot_projections(projections = eq_projections,
 #it works
 
 ## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-## 5. add sihek  ####
+## 2. add sihek  ####
 ## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 source("add_introduced_species.R")
 
 EEM_sihek <-
-  add_introduced_species(native_parameters = EEM_eq_short,
+  add_introduced_species(native_parameters = EEM_eq,
                          introduced_lower_bound_growth_rate = 0,
                          introduced_upper_bound_growth_rate = 1.1,
                          introduced_self_sign = -1,
@@ -177,7 +177,7 @@ EEM_sihek <- add_species_names(EEM_sihek,
                                                  "native trees"))
 
 ## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-## 6. check if equilibrium values are between upper and lower bounds ####
+## 2.1. check if equilibrium values are between upper and lower bounds ####
 ## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 EEM_outputs_sihek <- select_EEM_outputs(ensemble = EEM_sihek,
@@ -190,7 +190,7 @@ EEM_outputs_sihek <- select_EEM_outputs(ensemble = EEM_sihek,
 #it works
 
 ## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-## 7. plot projections with sihek but without artificial recruitment ####
+## 2.2. plot projections with sihek but without artificial recruitment ####
 ## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 mean_sihek <- c(0.00045/divider, mean_eq) #9/200ha = 0.00045/100m^2
@@ -211,7 +211,7 @@ plot_sihek <- adapted_plot_projections(projections = sihek_projections,
                                       title = "Projections with sihek")
 
 ## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-## 8. plot projections with sihek with artificial recruitment ####
+## 2.3. plot projections with sihek with artificial recruitment ####
 ## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 mean_sihek_artrec <- c(0, mean_eq)
@@ -223,11 +223,10 @@ sihek_projections_artrec <-
                                 scaled = FALSE,
                                 species_names = species_sihek,
                                 init_intervention_amount = 0.00045/divider, #9/200ha = 0.00045/100m^2
-                                init_intervention_timepoints = c(2,3),
+                                init_intervention_timepoints = c(15,16),
                                 sustain_intervention_amount = 0.00025/divider, #5/200ha = 0.00025/100m^2
-                                sustain_intervention_timepoints = c(3, 5, 7,
-                                                                    9, 11, 13,
-                                                                    15, 17, 19),
+                                sustain_intervention_timepoints = c(18, 20, 22,
+                                                                    24, 26, 28),
                                 sustain_intervention_threshold = 0.001/divider, #20/200ha = 0.001/100m^2
                                 time_step_len = 0.01,
                                 multiplier = divider)
@@ -247,7 +246,7 @@ plot_sihek_artrec <- plot_sihek_artrec +
              color = "red", linewidth = 0.2)
 
 ## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-## 9. compare the three plots ####
+## 3. compare the three plots ####
 ## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 library(gridExtra)
@@ -255,13 +254,13 @@ library(gridExtra)
 grid.arrange(plot_eq, plot_sihek, plot_sihek_artrec, ncol = 3)
 
 ## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-## 10. add coconut palms to the equilibrium system ####
+## 3. add coconut palms to the equilibrium system ####
 ## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 source("add_introduced_species.R")
 
 EEM_palm <-
-  add_introduced_species(native_parameters = EEM_eq_short,
+  add_introduced_species(native_parameters = EEM_eq,
                          introduced_lower_bound_growth_rate = 0,
                          introduced_upper_bound_growth_rate = 3,
                          introduced_self_sign = -1,
@@ -281,7 +280,7 @@ EEM_palm <- add_species_names(EEM_palm,
                                                 "native trees"))
 
 ## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-## 11. check if equilibrium values are between upper and lower bounds  ####
+## 3.1. check if equilibrium values are between upper and lower bounds  ####
 ## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 source("select_EEM_outputs.R")
@@ -296,7 +295,7 @@ selected_EEM_palms <- select_EEM_outputs(ensemble = EEM_palm,
 #it works
 
 ## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-## 12. plot projections with palm trees and with artificial control ####
+## 3.2. plot projections with palm trees and with artificial control ####
 ## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 mean_palm <- c(50/divider, mean_eq) #1000000/200ha = 50/100m^2
@@ -314,16 +313,10 @@ palm_projections <-
                                 species_names = species_names_palm,
                                 mode = "removal",
                                 init_intervention_amount = -75/divider, #-1500000/200ha = -75/100m^2
-                                init_intervention_timepoints = c(20,21),
+                                init_intervention_timepoints = c(10, 11),
                                 sustain_intervention_amount = -10/divider, #-100000/200ha = -5/100m^2
-                                sustain_intervention_timepoints = c(21.5, 22,
-                                                                    22.5, 23,
-                                                                    23.5, 24,
-                                                                    24.5, 25,
-                                                                    25.5, 26,
-                                                                    26.5, 27,
-                                                                    27.5, 28,
-                                                                    28.5, 29),
+                                sustain_intervention_timepoints =
+                                  round(seq(11.5,30,0.5),1),
                                 sustain_intervention_threshold = 0,
                                 intro_species_index = 1,
                                 time_step_len = 0.01,
@@ -343,23 +336,45 @@ plot_palm <- plot_palm +
              color = "red", linewidth = 0.2)
 
 ## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-## 13. Merge palm and sihek introductions ####
+## 4. Merge palm and sihek introductions ####
 ## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 source("merge_introductions.R")
 source("adapted_calculate_projections.R")
 source("adapted_ode_solve.R")
 
-signs_sihek_palm <- matrix(c(NA, -1,
-                             -1, NA),
-                           nrow = 2,
-                           ncol = 2,
-                           byrow = TRUE)
+# signs_sihek_palm <- matrix(c(NA, -1,
+#                              -1, NA),
+#                            nrow = 2,
+#                            ncol = 2,
+#                            byrow = TRUE)
 
 EEM_merged <- merge_introductions(EEM_intros = pairlist(EEM_sihek,
                                                          EEM_palm),
                                    sign_interaction_intros = -1,
                                    mode = "recycled")
+
+## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+## 4.1. check if equilibrium values are between upper and lower bounds ####
+## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+
+source("select_EEM_outputs.R")
+
+selected_EEM_merged <- select_EEM_outputs(ensemble = EEM_merged,
+                                          target_lower = c(0.0015/divider,
+                                                           106.4/divider,
+                                                           lower_100m2),
+                                          target_upper = c(0.0025/divider,
+                                                           106.6/divider,
+                                                           upper_100m2),
+                                          mode = "disturbed",
+                                          n_intro = 2)
+
+#it works
+
+## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+## 4.2. calculate projections for merged system ####
+## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 species_names_merged <- c("sihek", species_names_palm)
 
@@ -395,25 +410,7 @@ merged_projections <-
                                 multiplier = divider)
 
 ## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-## 14. check if equilibrium values are between upper and lower bounds ####
-## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-
-source("select_EEM_outputs.R")
-
-selected_EEM_merged <- select_EEM_outputs(ensemble = EEM_merged,
-                                          target_lower = c(0.0015/divider,
-                                                           106.4/divider,
-                                                           lower_100m2),
-                                          target_upper = c(0.0025/divider,
-                                                           106.6/divider,
-                                                           upper_100m2),
-                                          mode = "disturbed",
-                                          n_intro = 2)
-
-#it works
-
-## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-## 15. plot projections with palm trees & sihek and with artificial control ####
+## 4.3. plot projections with palm trees & sihek and with artificial control ####
 ## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 plot_merged <- adapted_plot_projections(
@@ -431,7 +428,7 @@ plot_merged <- plot_merged +
              color = "red", linewidth = 0.2)
 
 ## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-## 16. Normalise abundances of native species, merged system ####
+## 5. Normalise abundances of native species, merged system ####
 ## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 merged_norm_projections <- merged_projections
 merged_norm_projections[merged_norm_projections$species %in% species_eq,]$pop <-
@@ -452,7 +449,7 @@ plot_merged_norm <- plot_merged_norm +
              color = "red", linewidth = 0.2)
 
 ## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-## 17. Normalise abundances of native species, merged system vs palm system ####
+## 5.1. Normalise abundances of native species, merged system vs palm system ####
 ## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 palm_norm_projections <- merged_projections
@@ -473,7 +470,7 @@ plot_palm_norm <- plot_palm_norm +
              color = "red", linewidth = 0.2)
 
 ## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-## 18. plot only the native species from the normalised merged system ####
+## 5.2. plot only the native species from the normalised merged system ####
 ## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 plot_eq_merged_norm_palm <- adapted_plot_projections(
