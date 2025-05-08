@@ -139,6 +139,8 @@ eq_projections <- adapted_calculate_projections(EEM_eq,
                                                 species_names = species_eq,
                                                 multiplier = divider)
 
+save(eq_projections, file = "eq_projections.RData")
+
 source("adapted_plot_projections.R")
 
 plot_eq <- adapted_plot_projections(projections = eq_projections,
@@ -207,6 +209,8 @@ sihek_projections <-
                                 species_names = species_sihek,
                                 multiplier = divider)
 
+save(sihek_projections, file = "sihek_projections.RData")
+
 plot_sihek <- adapted_plot_projections(projections = sihek_projections,
                                       title = "Projections with sihek")
 
@@ -215,6 +219,7 @@ plot_sihek <- adapted_plot_projections(projections = sihek_projections,
 ## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 mean_sihek_artrec <- c(0, mean_eq)
+species_sihek <- c("sihek", species_eq)
 
 sihek_projections_artrec <-
   adapted_calculate_projections(EEM_sihek,
@@ -231,6 +236,7 @@ sihek_projections_artrec <-
                                 time_step_len = 0.01,
                                 multiplier = divider)
 
+save(sihek_projections_artrec, file = "sihek_projections_artrec.RData")
 
 plot_sihek_artrec <- adapted_plot_projections(
   projections = sihek_projections_artrec,
@@ -267,6 +273,8 @@ EEM_palm <-
                          introduced_row_signs = c(1, -1, -1, 1, 1, 1, 1, -1),
                          introduced_col_signs = rep(-1,8),
                          introduced_k = 106.5/divider) #2130000/200ha = 106.5/100m^2
+
+source("add_species_names.R")
 
 EEM_palm <- add_species_names(EEM_palm,
                               species_names = c("palm trees",
@@ -321,6 +329,8 @@ palm_projections <-
                                 intro_species_index = 1,
                                 time_step_len = 0.01,
                                 multiplier = divider)
+
+save(palm_projections, file = "palm_projections.RData")
 
 plot_palm <- adapted_plot_projections(
   projections = palm_projections,
@@ -408,6 +418,8 @@ merged_projections <-
                                   2),
                                 time_step_len = 0.01,
                                 multiplier = divider)
+
+save(merged_projections, file = "merged_projections.RData")
 
 ## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 ## 4.3. plot projections with palm trees & sihek and with artificial control ####
