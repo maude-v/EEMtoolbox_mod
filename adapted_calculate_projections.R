@@ -177,12 +177,20 @@ adapted_calculate_projections <-
       return(projections)
     }
 
+    if (isFALSE(is.list(initial_condition))) {
+      list_init <- vector(mode = list, length = length(parameters))
+      for (i in seq_len(length(parameters))) {
+        list_init[[i]] <- initial_condition
+      }
+      initial_condition <- list_init
+    }
+
     abundance <- lapply(seq_len(length(parameters)),
                         function(i) {
                           cat("\r","Solving ODE for parameter set", i, "/", length(parameters))
                           ode_solve_it(parameters[[i]],
                                        model = model,
-                                       initial_condition = initial_condition,
+                                       initial_condition = initial_condition[[i]],
                                        t_window = t_window,
                                        time_step_len = time_step_len,
                                        derivative,
