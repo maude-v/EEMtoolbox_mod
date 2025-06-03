@@ -1,0 +1,77 @@
+---
+title: "palm_control"
+author: "Maude Vernet"
+date: "2025-05-23"
+output: html_document
+---
+
+```{r set parameters}
+divider <- 4*10^6
+
+pre_species <- c("palm trees",
+                 "seabirds",
+                 "herbivorous crabs",
+                 "carnivorous crabs",
+                 "cane spiders",
+                 "geckos",
+                 "cockroaches",
+                 "terrestrial arthropods",
+                 "flying arthropods",
+                 "native trees",
+                 "others")
+```
+
+```{r calculate projections with control of both palm and sihek}
+source("../../EEMtoolbox_fork/adapted functions/adapted_calculate_projections.R")
+source("../../EEMtoolbox_fork/adapted functions/adapted_ode_solve.R")
+source("../../EEMtoolbox_fork/adapted functions/extract_eq.R")
+
+load("../pre_introduction/pre_EEM.RData")
+
+pre_initial <- extract_eq(pre_EEM)
+for(i in seq_len(length(pre_EEM))) {
+  pre_initial[[i]] <- c("palm trees" = 32876/divider, 
+                         pre_initial[[i]][2:11])
+}
+
+palm_projections <- 
+  adapted_calculate_projections(parameters = pre_EEM,
+                                initial_condition = pre_initial,
+                                t_window = c(0, 29), #0 is 2016, 29 is 2045
+                                scaled = FALSE,
+                                species_names = c(pre_species),
+                                mode = "removal",
+                                sustain_intervention_amount = -436/divider,
+                                sustain_intervention_timepoints = 
+                                  round(seq(3, 29, 0.09),2),
+                                sustain_intervention_threshold = 10000/divider,
+                                intro_species_index = 1,
+                                time_step_len = 0.01)
+
+save(palm_projections, file = "palm_projections.RData")
+```
+
+```{r plot projections}
+source("../../EEMtoolbox_fork/adapted functions/adapted_plot_projections.R")
+load("palm_projections.RData")
+
+palm_plot <- adapted_plot_projections(
+  projections = palm_projections,
+  title = "Projections pre-introduction system",
+  multiplier = divider)
+
+
+threshholds <- data.frame(yintercepts = c(32876/divider, #k
+                                          10000), #threshold
+                          species = "palm trees")
+
+library(ggplot2)
+
+palm_plot <- palm_plot +
+  geom_hline(data = threshholds, aes(yintercept = yintercepts),
+             color = "red", linewidth = 0.2)
+
+palm_plot
+
+save(palm_plot, file = "palm_plot.RData")
+```
