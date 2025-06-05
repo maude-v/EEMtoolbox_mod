@@ -1,11 +1,18 @@
 #' @title Merge multiple single-species introductions into one system
-#' @param EEM_intros a pairlist of objects obtained with add_introduced_species()
-#' @param sign_interaction_intros one number or a matrix of signs for the interactions between introduced species and native species (intraspecies interactions to be marked as NA).
-#' @param mode "updated" or "recycled". If "updated", the interaction signs are updated for each projection. If "recycled", the interaction signs are recycled in all projections
+#' @description
+#' This function merges multiple single-species introductions into one
+#' ecosystem.
+#' @param EEM_intros a pairlist of objects obtained with
+#' add_introduced_species()
+#' @param sign_interaction_intros one number or a matrix of signs for the
+#' interactions between introduced species and native species (intraspecies
+#' interactions to be marked as NA).
+#' @param mode "updated" or "recycled". If "updated", the interaction signs are
+#' updated for each projection. If "recycled", the interaction signs are
+#' recycled in all projections
 #' @return a list of EEM objects
-
-
-
+#' @author Maude Vernet
+#' @export
 merge_introductions <- function(EEM_intros,
                                 sign_interaction_intros = 0,
                                 mode = "updated") {
@@ -25,7 +32,7 @@ merge_introductions <- function(EEM_intros,
   n_proj <- length(EEM_intros[[1]])
   for (i in seq_len(n_intro)) {
     if (length(EEM_intros[[i]]) != n_proj) {
-      stop("All objects in EEM_intros should have the same number of projections")
+      stop("All objects in EEM_intros should have same number of projections")
     }
   }
 
@@ -68,7 +75,8 @@ merge_introductions <- function(EEM_intros,
         EEM_intros[[j]][[i]]$interaction_matrix[1, 2:(n_native + 1)]
       A_full[[i]]$interaction_matrix[(n_intro + 1):tot_species, j] <-
         EEM_intros[[j]][[i]]$interaction_matrix[2:(n_native + 1), 1]
-      A_full[[i]]$interaction_matrix[j, j] <- EEM_intros[[j]][[i]]$interaction_matrix[1, 1]
+      A_full[[i]]$interaction_matrix[j, j] <-
+        EEM_intros[[j]][[i]]$interaction_matrix[1, 1]
 
       A_full[[i]]$growthrates[j] <- EEM_intros[[j]][[i]]$growthrates[1]
     }

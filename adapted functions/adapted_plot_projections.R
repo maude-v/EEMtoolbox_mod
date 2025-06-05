@@ -1,3 +1,14 @@
+#' @title adapted_plot_projections
+#' @description
+#' Plot projections of species abundance
+#' @param projections A data frame containing the projections of species
+#' abundance.
+#' @param title Title of the plot.
+#' @param multiplier A numeric value to scale the abundance values.
+#' @param scaled Logical value indicating whether to scale the y-axis.
+#' @return A ggplot object with the projections of species abundance.
+#' @author Maude Vernet
+#' @export
 adapted_plot_projections <- function(projections,
                                      title = NA,
                                      multiplier = 1,

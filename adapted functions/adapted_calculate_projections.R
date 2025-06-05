@@ -21,6 +21,7 @@
 #' output <- EEM(matrix(c(-1,-1,1,-1),ncol=2)) #automatically loads an example of interaction matrix as dingo_matrix
 #' calculate_projections(output,  c(1,1), t_window=c(0,1))
 #' @return dataset of species abundances over time
+#' @author Maude Vernet
 #' @export
 adapted_calculate_projections <-
   function(parameters,

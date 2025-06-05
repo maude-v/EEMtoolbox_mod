@@ -1,13 +1,16 @@
-#' Extract equilibrium values from EEM object
+#' @title extract_eq
+#' @description
+#' Extract equilibrium values from parameter sets of an EEM object
 #' @param EEM A list of EEM objects
 #' @param model The model used for the EEM objects. Default is "GLV".
 #' @return A list of equilibrium values for each EEM object
 #' @examples
-#' #' # Assuming EEM is a list of EEM objects
-#' #' equilibrium_values <- extract_eq(EEM)
-#' #' # Print the equilibrium values
-#' #' print(equilibrium_values)
-
+#' # Assuming EEM is a list of EEM objects
+#' equilibrium_values <- extract_eq(EEM)
+#' # Print the equilibrium values
+#' print(equilibrium_values)
+#' @author Maude Vernet
+#' @export
 extract_eq <- function(EEM,
                        model = "GLV") {
   equilibrium_values <- vector(mode = "list", length = length(EEM))

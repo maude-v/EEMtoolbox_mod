@@ -3,6 +3,8 @@ title: "Initial abundances"
 author: "Maude Vernet"
 date: "2025-05-20"
 output: html_document
+editor_options: 
+  chunk_output_type: inline
 ---
 
 # Monitoring data:
@@ -54,11 +56,12 @@ Data_allround <- do.call(rbind, lapply(names(group_list), function(g) {
   x <- group_list[[g]]
   m <- mean(x)
   s <- sd(x) / sqrt(length(x))
-  ci <- qt(0.975, df = length(x) - 1) * s
+  lci <- quantile(x, 0.025)
+  uci <- quantile(x, 0.975)
   data.frame(group = g,
              mean = m,
-             lower_95CI = m - ci,
-             upper_95CI = m + ci,
+             lower_95CI = lci,
+             upper_95CI = uci,
              n_sessions = length(x))
 }))
 
