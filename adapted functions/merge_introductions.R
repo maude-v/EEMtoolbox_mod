@@ -99,11 +99,11 @@ merge_introductions <- function(EEM_intros,
       }
     }
   } else if (length(sign_interaction_intros) == 1) {
-    for (i in seq_len(n_proj)) {
-    if (sign_interaction_intros != 0) {
     if (mode == "recycled") {
       interaction_term <- runif(n_intro)*sign_interaction_intros
     }
+    for (i in seq_len(n_proj)) {
+    if (sign_interaction_intros != 0) {
       for (j in seq_len(n_intro)) {
       if (mode == "updated") {
         interaction_term <- runif(n_intro)*sign_interaction_intros
