@@ -1,4 +1,5 @@
 #' @title adapted_ode_solve
+#' @author Maude Vernet
 #' @description
 #' This function is a wrapper for the `deSolve::ode` function, which solves
 #' ordinary differential equations (ODEs) for ecological models.

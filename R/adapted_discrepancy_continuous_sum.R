@@ -1,4 +1,5 @@
 #' @title Adapted disc_func for EEM
+#' @author Maude Vernet
 #' @description A wrapper around \code{\link[EEMtoolbox]{dicrepancy_continuous_sum}()} that
 #’ allows you to enforce upper and lower bounds on equilibrium species abundances.
 #' @inheritParams discrepancy_continuous_sum

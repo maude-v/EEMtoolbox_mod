@@ -1,4 +1,5 @@
-#' @title Calculate projections by solving ODEs
+#' @title adapted_calculate_projections
+#' @author Maude Vernet
 #' @description
 #' Solves ODEs and plot solutions
 #' @param parameters list like object of ensemble of parameters (outputs of  \link[EEMtoolbox]{EEM})
@@ -20,8 +21,14 @@
 #' @param extinction_threshold threshold below which species are considered extinct, default = 0
 #' @examples
 #' library(EEMtoolbox)
-#' output <- EEM(matrix(c(-1,-1,1,-1),ncol=2)) #automatically loads an example of interaction matrix as dingo_matrix
-#' calculate_projections(output,  c(1,1), t_window=c(0,1))
+#' output <- EEM(dingo_matrix, n_ensemble = 2) #automatically loads an example of interaction matrix as dingo_matrix
+#' adapted_calculate_projections(output,
+#'                               initial_condition = c(1,1),
+#'                               t_window = c(0,1),
+#'                               mode = "recruitment",
+#'                               init_intervention_amount = 2,
+#'                               init_intervention_timepoints = c(1, 2))
+#'
 #' @return dataset of species abundances over time
 #' @author Maude Vernet
 #' @export
@@ -35,7 +42,7 @@ adapted_calculate_projections <-
            scaled=FALSE,
            species_names=NA,
            # Recruitment parameters:
-           mode = "recruitment", # "recruitment" or "removal"
+           mode = "recruitment",
            init_intervention_amount = 0,
            init_intervention_timepoints = NA,
            sustain_intervention_amount = 0,

@@ -1,4 +1,5 @@
 #' @title add_introduced_species
+#' @author Maude Vernet
 #' @description
 #' This function adds an introduced species to a list of native species
 #' parameters.
@@ -31,7 +32,11 @@
 #' `introduced_self_sign`. The interactions are added to the existing
 #' `interaction_matrix` of each native species, and the growth rates are
 #' extended to include the introduced species.
-#' @author Maude Vernet
+#' @examples
+#' library(EEMtoolbox)
+#' output <- EEM(dingo_matrix, n_ensemble = 2)
+#' withnames <- add_species_names(output, c("sp1", "sp2", "sp3", "sp4",
+#'                                          "sp5", "sp6", "sp7", "sp8"))
 #' @export
 add_introduced_species <- function(native_parameters,
                                    introduced_lower_bound_growth_rate = 1,

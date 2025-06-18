@@ -1,4 +1,5 @@
 #' @title extract_eq
+#' @author Maude Vernet
 #' @description
 #' Extract equilibrium values from parameter sets of an EEM object
 #' @param EEM A list of EEM objects
@@ -9,7 +10,6 @@
 #' equilibrium_values <- extract_eq(EEM)
 #' # Print the equilibrium values
 #' print(equilibrium_values)
-#' @author Maude Vernet
 #' @export
 extract_eq <- function(EEM,
                        model = "GLV") {

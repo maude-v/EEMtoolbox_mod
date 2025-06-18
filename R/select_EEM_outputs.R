@@ -1,4 +1,5 @@
 #' @title select_EEM_outputs
+#' @author Maude Vernet
 #' @description
 #' This function filters a list of ecological ensemble model (EEM) outputs
 #' based on whether the system has reached equilibrium and if the
@@ -24,16 +25,11 @@
 #'   criteria.
 #'
 #' @examples
-#' \dontrun{
-#' # Suppose 'eem_list' is a list of EEM outputs you generated earlier:
-#'   ensemble <- select_EEM_outputs(
-#'   outputs      = eem_list,
-#'   lower_bound  = rep(0.1, length(species)),
-#'   upper_bound  = rep(10, length(species))
-#' )
-#' }
-#'
-#' @author Maude Vernet
+#' ensemble <- EEM(dingo_matrix, n_ensemble = 2)
+#' output <- select_EEM_outputs(ensemble,
+#'                              lower_bound  = rep(0.1, 8),
+#'                              upper_bound  = rep(15, 8))
+
 #' @export
 select_EEM_outputs <- function(ensemble,
                                target_lower,
