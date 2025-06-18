@@ -78,13 +78,13 @@ post_projections <-
                                          "removal"),
                                 init_intervention_amount = c(9/divider,
                                                              0), 
-                                init_intervention_timepoints = list(c(9,10),
+                                init_intervention_timepoints = list(c(9,11),
                                                                     NA),
                                 sustain_intervention_amount = c(5/divider,
                                                                 -436/divider), #436 palm trees removed per month during the whole duration?
                                 sustain_intervention_timepoints = 
-                                  list(round(seq(12, 29, 2)),
-                                       round(seq(3, 29, 0.09),2)),
+                                  list(round(seq(13, 29, 2)),
+                                       round(seq(3, 29, 0.09), 2)),
                                 sustain_intervention_threshold = 
                                   c(20/divider, 
                                     10000/divider),
@@ -96,7 +96,7 @@ save(post_projections, file = "post_projections.RData")
 ```
 
 ```{r plot projections}
-source("../../EEMtoolbox_fork/adapted functions/adapted_plot_projections.R")
+source("../../adapted functions/adapted_plot_projections.R")
 
 load("post_projections.RData")
 

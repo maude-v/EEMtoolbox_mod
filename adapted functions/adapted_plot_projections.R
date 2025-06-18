@@ -19,8 +19,8 @@ adapted_plot_projections <- function(projections,
   abundance_eq$pop <- abundance_eq$pop * multiplier
   abundance_eq <- dplyr::summarise(abundance_eq,
                                    median_pop = median(pop),
-                                   upper = quantile(pop, 0.975),
-                                   lower = quantile(pop, 0.025))
+                                   upper = max(pop),
+                                   lower = min(pop))
 
   #basic plot
   if(isTRUE(scaled)) {

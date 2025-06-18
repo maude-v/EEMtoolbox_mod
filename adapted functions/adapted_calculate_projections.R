@@ -10,12 +10,14 @@
 #' @param scaled Boolean indicating if projections should be scaled to steady state. If true, the parameter initial_condition should be scaled too. Default FALSE
 #' @param species_names vector of strings for names of species. If NA plots only display species index number, . Default NA.
 #' @param mode "recruitment" or "removal". Default "recruitment"
-#' @param init_intervention_amount vector or list (if multiple introduced species) with the number of individuals in initial interventions for each introduced species, default = 0
+#' @param init_intervention_amount vector with the number of individuals in initial interventions for each introduced species, default = 0
 #' @param init_intervention_interval vector or list (if multiple introduced species) with the initial intervention interval for each introduced species, default = 0
-#' @param sustain_intervention_amount vector or list (if multiple introduced species) with the number of individuals in subsequent interventions for each introduced species, default = 0
+#' @param sustain_intervention_amount vector with the number of individuals in subsequent interventions for each introduced species, default = 0
 #' @param sustain_intervention_interval vector or list (if multiple introduced species) with the subsequent intervention interval, for each introduced species, default = NA
 #' @param sustain_intervention_threshold vector or list (if multiple introduced species) with the abundance threshold where subsequent interventions stop for each introduced species, default = NA
 #' @param intro_species_index vector indicating which species in the index is/are the introduced one(s), default = 1
+#' @param multiplier multiplier for the initial condition, default = 1
+#' @param extinction_threshold threshold below which species are considered extinct, default = 0
 #' @examples
 #' library(EEMtoolbox)
 #' output <- EEM(matrix(c(-1,-1,1,-1),ncol=2)) #automatically loads an example of interaction matrix as dingo_matrix
@@ -179,7 +181,7 @@ adapted_calculate_projections <-
     }
 
     if (isFALSE(is.list(initial_condition))) {
-      list_init <- vector(mode = list, length = length(parameters))
+      list_init <- vector(mode = "list", length = length(parameters))
       for (i in seq_len(length(parameters))) {
         list_init[[i]] <- initial_condition
       }
