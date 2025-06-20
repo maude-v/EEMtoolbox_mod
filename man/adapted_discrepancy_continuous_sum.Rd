@@ -29,6 +29,10 @@ A wrapper around \code{EEMtoolbox::dicrepancy_continuous_sum()} that
 This is exactly the same logic as \code{dicrepancy_continuous_sum()} in EEMtoolbox,
 except that the standard EEMtoolbox version does \emph{not} check for user‐specified
 equilibrium bounds.
+
+\verb{important notice}: numbers in \code{target_lower} and \code{target_upper} are to be
+inputed directly, and not inside a variable. Otherwise, they are not found by
+the function.
 }
 \examples{
 out <- EEMtoolbox::EEM(

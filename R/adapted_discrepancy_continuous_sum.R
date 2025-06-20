@@ -13,6 +13,10 @@
 #' except that the standard EEMtoolbox version does _not_ check for user‐specified
 #' equilibrium bounds.
 #'
+#' `important notice`: numbers in `target_lower` and `target_upper` are to be
+#' inputed directly, and not inside a variable. Otherwise, they are not found by
+#' the function.
+#'
 #' @examples
 #' out <- EEMtoolbox::EEM(
 #'              interaction_matrix = matrix(c(-1, -1, 1, -1), ncol = 2),
