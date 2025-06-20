@@ -6,10 +6,8 @@
 #' @param model The model used for the EEM objects. Default is "GLV".
 #' @return A list of equilibrium values for each EEM object
 #' @examples
-#' # Assuming EEM is a list of EEM objects
-#' equilibrium_values <- extract_eq(EEM)
-#' # Print the equilibrium values
-#' print(equilibrium_values)
+#' out <- EEMtoolbox::EEM(matrix(c(-1, -1, 1, -1), ncol = 2), n_ensemble = 2)
+#' equilibrium_values <- extract_eq(out)
 #' @export
 extract_eq <- function(EEM,
                        model = "GLV") {

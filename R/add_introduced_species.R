@@ -34,9 +34,12 @@
 #' extended to include the introduced species.
 #' @examples
 #' library(EEMtoolbox)
-#' output <- EEM(dingo_matrix, n_ensemble = 2)
-#' withnames <- add_species_names(output, c("sp1", "sp2", "sp3", "sp4",
-#'                                          "sp5", "sp6", "sp7", "sp8"))
+#' output <- EEMtoolbox::EEM(matrix(c(-1, -1, 1, -1), ncol = 2), n_ensemble = 2)
+#' intro <- add_introduced_species(output,
+#'                                 introduced_self_sign = -1,
+#'                                 introduced_row_signs = c(1, 1),
+#'                                 introduced_col_signs = c(-1, -1),
+#'                                 introduced_k = 10)
 #' @export
 add_introduced_species <- function(native_parameters,
                                    introduced_lower_bound_growth_rate = 1,

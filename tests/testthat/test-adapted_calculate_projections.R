@@ -1,21 +1,19 @@
 # Test that projections starting at equilibrium remain constant
 test_that("adapted_calculate_projections maintains equilibrium when initialized at steady state", {
-  M <- EEMtoolbox::EEM(dingo_matrix, n_ensemble = 2)
+  output <- EEMtoolbox::EEM(matrix(c(-1,-1,1,-1),ncol = 2), n_ensemble = 2)
   # Extract equilibrium
-  eq_vals <- extract_eq(M)
+  eq_vals <- extract_eq(output)
   # Run projections with no interventions
-  res <- adapted_calculate_projections(
-    parameters = M,
-    initial_condition = eq_vals,
-    t_window = c(0, 5),
-    time_step_len = 0.1,
-    model = "GLV",
-    mode = "recruitment",
-    multiplier = 1
-  )
+  res <- adapted_calculate_projections(parameters = output,
+                                                   initial_condition = eq_vals,
+                                                   t_window = c(0, 5),
+                                                   time_step_len = 0.1,
+                                                   model = "GLV",
+                                                   mode = "recruitment",
+                                                   multiplier = 1)
   n_steps <- length(seq(0, 5, by = 0.1))
   # All populations at each time should equal equilibrium
-  for (i in seq_len(length(M[[1]]$growthrates))) {
+  for (i in seq_len(length(output[[1]]$growthrates))) {
     expect_true(all(abs(res[res$species == i & res$sim == 1,]$pop -
                           rep(eq_vals[[1]][i], length = n_steps)) < 1e-3))
     expect_true(all(abs(res[res$species == i & res$sim == 2,]$pop -
@@ -25,14 +23,15 @@ test_that("adapted_calculate_projections maintains equilibrium when initialized 
 
 # Test events in adapted_calculate_projections
 test_that("function triggers events at correct times", {
-  M <- EEMtoolbox::EEM(dingo_matrix, n_ensemble = 2)
+  output <- EEMtoolbox::EEM(matrix(c(-1,-1,1,-1),ncol = 2), n_ensemble = 2)
+  eq_vals <- extract_eq(output)
 
   #test recruitment events
 
 #test init events triggered at correct times
   res <- adapted_calculate_projections(
-    parameters = M,
-    initial_condition = rep(0,8),
+    parameters = output,
+    initial_condition = rep(0,2),
     t_window = c(0, 1),
     time_step_len = 0.1,
     model = "GLV",
@@ -44,8 +43,8 @@ test_that("function triggers events at correct times", {
   expect_true(all(res[res$time == 0.6 & res$species == 1,]$pop > 0))
   #test sustain events triggered at correct times
   res <- adapted_calculate_projections(
-    parameters = M,
-    initial_condition = rep(0,8),
+    parameters = output,
+    initial_condition = rep(0,2),
     t_window = c(0, 1),
     time_step_len = 0.1,
     model = "GLV",
@@ -57,9 +56,9 @@ test_that("function triggers events at correct times", {
   expect_true(all(res[res$time == 0.5 & res$species == 1,]$pop == 0))
   expect_true(all(res[res$time == 0.6 & res$species == 1,]$pop > 0))
   #test threshold
-  eq_vals <- extract_eq(M)
+  eq_vals <- extract_eq(output)
   res <- adapted_calculate_projections(
-    parameters = M,
+    parameters = output,
     initial_condition = eq_vals,
     t_window = c(0, 1),
     time_step_len = 0.1,
@@ -83,8 +82,8 @@ test_that("function triggers events at correct times", {
 #same with 2 species
   #test init events triggered at correct times
   res <- adapted_calculate_projections(
-    parameters = M,
-    initial_condition = rep(0,8),
+    parameters = output,
+    initial_condition = rep(0,2),
     t_window = c(0, 1),
     time_step_len = 0.1,
     model = "GLV",
@@ -102,23 +101,22 @@ test_that("function triggers events at correct times", {
   #test removal events
 
   #test init events triggered at correct times
-  res <- adapted_calculate_projections(
-    parameters = M,
-    initial_condition = eq_vals,
-    t_window = c(0, 1),
-    time_step_len = 0.1,
-    model = "GLV",
-    scaled = FALSE,
-    mode = "removal",
-    init_intervention_amount = -5,
-    init_intervention_timepoints = 0.5)
+  res <- adapted_calculate_projections(parameters = output,
+                                       initial_condition = eq_vals,
+                                       t_window = c(0, 1),
+                                       time_step_len = 0.1,
+                                       model = "GLV",
+                                       scaled = FALSE,
+                                       mode = "removal",
+                                       init_intervention_amount = -5,
+                                       init_intervention_timepoints = 0.5)
   expect_true(all(round(res[res$time == 0.5 & res$species == 1,]$pop, 2) ==
                     round(c(eq_vals[[1]][1], eq_vals[[2]][1]),2)))
   expect_true(all(round(res[res$time == 0.6 & res$species == 1,]$pop, 2) <
                     round(c(eq_vals[[1]][1], eq_vals[[2]][1]), 2)))
   #test sustain events triggered at correct times
   res <- adapted_calculate_projections(
-    parameters = M,
+    parameters = output,
     initial_condition = eq_vals,
     t_window = c(0, 1),
     time_step_len = 0.1,
@@ -135,7 +133,7 @@ test_that("function triggers events at correct times", {
   expect_true(min(res[res$species == 1, ]$pop) == 0)
   #test threshold
   res <- adapted_calculate_projections(
-    parameters = M,
+    parameters = output,
     initial_condition = eq_vals,
     t_window = c(0, 1),
     time_step_len = 0.1,

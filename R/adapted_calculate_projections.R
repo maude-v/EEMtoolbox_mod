@@ -11,26 +11,25 @@
 #' @param scaled Boolean indicating if projections should be scaled to steady state. If true, the parameter initial_condition should be scaled too. Default FALSE
 #' @param species_names vector of strings for names of species. If NA plots only display species index number, . Default NA.
 #' @param mode "recruitment" or "removal". Default "recruitment"
+#' @param init_intervention_timepoints vector or list (if multiple introduced species) with the initial intervention timepoints for each introduced species, default = NA
 #' @param init_intervention_amount vector with the number of individuals in initial interventions for each introduced species, default = 0
-#' @param init_intervention_interval vector or list (if multiple introduced species) with the initial intervention interval for each introduced species, default = 0
 #' @param sustain_intervention_amount vector with the number of individuals in subsequent interventions for each introduced species, default = 0
-#' @param sustain_intervention_interval vector or list (if multiple introduced species) with the subsequent intervention interval, for each introduced species, default = NA
+#' @param sustain_intervention_timepoints vector or list (if multiple introduced species) with the subsequent intervention timepoints for each introduced species, default = NA
 #' @param sustain_intervention_threshold vector or list (if multiple introduced species) with the abundance threshold where subsequent interventions stop for each introduced species, default = NA
 #' @param intro_species_index vector indicating which species in the index is/are the introduced one(s), default = 1
 #' @param multiplier multiplier for the initial condition, default = 1
 #' @param extinction_threshold threshold below which species are considered extinct, default = 0
 #' @examples
 #' library(EEMtoolbox)
-#' output <- EEM(dingo_matrix, n_ensemble = 2) #automatically loads an example of interaction matrix as dingo_matrix
+#' output <- EEMtoolbox::EEM(matrix(c(-1,-1,1,-1),ncol =2), n_ensemble = 2)
 #' adapted_calculate_projections(output,
-#'                               initial_condition = c(1,1),
+#'                               initial_condition = rep(1,2),
 #'                               t_window = c(0,1),
 #'                               mode = "recruitment",
 #'                               init_intervention_amount = 2,
 #'                               init_intervention_timepoints = c(1, 2))
 #'
 #' @return dataset of species abundances over time
-#' @author Maude Vernet
 #' @export
 adapted_calculate_projections <-
   function(parameters,

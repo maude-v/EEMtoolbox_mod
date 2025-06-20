@@ -17,20 +17,29 @@ test_that("test discrepancy function", {
 })
 
 test_that("bounds enforcement", {
-  A_toy <- matrix(c(2, 0,
-                    0, 2), nrow = 2)
-  r_toy <- c(1, 1)
-  # Solve for equilibrium: x* = A^{-1} r = 0.5, 0.5
-  # Now impose a lower bound > 0.5, e.g. lower_bounds = c(0.7, 0.7)
-  lower <- c(0.7, 0.7)
-  upper <- NULL
-  res <-
-    EEMtoolbox::adapted_dicrepancy_continuous_sum(A = A_toy,
-                                                  r = r_toy,
-                                                  lower_bounds = lower,
-                                                  upper_bounds = upper,
-                                                  stop_on_out_of_bound = FALSE)
-  expect_true(res$out_of_bound)
-  # Both species violate the lower bound:
-  expect_setequal(res$bounds_violation_indices, c(1L, 2L))
+  output <- EEMtoolbox::EEM(matrix(c(-1,-1,1,-1),ncol = 2),
+                            n_ensemble = 2,
+                            disc_func = function(data) {
+                              adapted_discrepancy_continuous_sum(
+                                data,
+                                target_lower = rep(1, 2),
+                                target_upper = rep(15, 2))})
+  eq <- extract_eq(output)
+  target_lower <- rep(1, 2)
+  target_upper <- rep(15, 2)
+  for (i in seq_along(output)) {
+  jacobian <- output[[i]]$interaction_matrix*matrix(eq[[i]],
+                                                    ncol = 2,
+                                                    nrow = 2)
+  diag(jacobian) <- diag(jacobian) +
+    output[[i]]$interaction_matrix %*% eq[[i]] +
+    output[[i]]$growthrates
+  stability_eigenvalues <- Re(eigen(jacobian)$values)
+  res <- EEMtoolbox::adapted_discrepancy_continuous_sum(
+    data = c(eq[[i]],
+             stability_eigenvalues),
+    target_lower = target_lower,
+    target_upper = target_upper)
+  expect_true(res == 0)
+  }
 })

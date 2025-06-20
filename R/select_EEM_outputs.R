@@ -5,9 +5,9 @@
 #' based on whether the system has reached equilibrium and if the
 #' equilibrium abundances of species fall within specified bounds.
 #' @param ensemble an object of type `EEM`.
-#' @param lower_bound A numeric vector (or scalar) specifying the minimum
+#' @param target_lower A numeric vector (or scalar) specifying the minimum
 #'    acceptable equilibrium abundance for each species.
-#' @param upper_bound A numeric vector (or scalar) specifying the maximum
+#' @param target_upper A numeric vector (or scalar) specifying the maximum
 #'    acceptable equilibrium abundance for each species.
 #' @param mode A character string indicating the mode of the simulation, either
 #'   `"native"` or `"disturbed"`. This affects how the equilibrium is evaluated.
@@ -25,10 +25,10 @@
 #'   criteria.
 #'
 #' @examples
-#' ensemble <- EEM(dingo_matrix, n_ensemble = 2)
-#' output <- select_EEM_outputs(ensemble,
-#'                              lower_bound  = rep(0.1, 8),
-#'                              upper_bound  = rep(15, 8))
+#' output <- EEMtoolbox::EEM(matrix(c(-1, -1, 1, -1), ncol = 2), n_ensemble = 2)
+#' output <- select_EEM_outputs(output,
+#'                              target_lower  = rep(0.1, 2),
+#'                              target_upper  = rep(15, 2))
 
 #' @export
 select_EEM_outputs <- function(ensemble,

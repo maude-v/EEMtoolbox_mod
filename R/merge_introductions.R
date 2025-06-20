@@ -10,6 +10,22 @@
 #' @param mode "updated" or "recycled". If "updated", the interaction signs are
 #' updated for each projection. If "recycled", the interaction signs are
 #' recycled in all projections
+#' @examples
+#' out1 <- EEMtoolbox::EEM(matrix(c(-1, -1, 1, -1), ncol = 2), n_ensemble = 2)
+#' out1_intro <- add_introduced_species(out1,
+#'                                      introduced_self_sign = -1,
+#'                                      introduced_row_signs = c(1, 1),
+#'                                      introduced_col_signs = c(-1, -1),
+#'                                      introduced_k = 5)
+#' out2 <- EEMtoolbox::EEM(matrix(c(-1, -1, 1, -1), ncol = 2), n_ensemble = 2)
+#' out2_intro <- add_introduced_species(out2,
+#'                                      introduced_self_sign = -1,
+#'                                      introduced_row_signs = c(1, 1),
+#'                                      introduced_col_signs = c(-1, -1),
+#'                                      introduced_k = 10)
+#' merged <- merge_introductions(pairlist(out1_intro, out2_intro),
+#'                               sign_interaction_intros = 0,
+#'                               mode = "updated")
 #' @return a list of EEM objects
 #' @author Maude Vernet
 #' @export

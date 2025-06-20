@@ -1,50 +1,33 @@
 #' @title Adapted disc_func for EEM
 #' @author Maude Vernet
-#' @description A wrapper around \code{\link[EEMtoolbox]{dicrepancy_continuous_sum}()} that
+#' @description A wrapper around \code{EEMtoolbox::dicrepancy_continuous_sum()} that
 #’ allows you to enforce upper and lower bounds on equilibrium species abundances.
 #' @inheritParams discrepancy_continuous_sum
-#' @param lower_bounds Numeric vector of length p. If provided, these values will
+#' @param target_lower Numeric vector of length p. If provided, these values will
 #'   serve as the minimum allowable equilibrium abundances for each of the p species.
-#'   Any solution below \code{lower_bounds} is reported as “out of bound.”
-#' @param name description upper_bounds Numeric vector of length p. If provided, these values will
-#'   serve as the maximum allowable equilibrium abundances. Any solution above
-#'   \code{upper_bounds} is reported as “out of bound.”
+#' @param target_upper Numeric vector of length p. If provided, these values will
+#'   serve as the maximum allowable equilibrium abundances for each of the p species.
 #'
 #' @details
-#' Internally calls \code{EEMtoolbox::dicrepancy_continuous_sum()} with the same
-#' syntax, then post‐filters the returned equilibrium abundances to check whether
-#' all species fall within \code{[lower_bounds, upper_bounds]}. If any are outside,
-#' a warning is thrown (or, optionally, an error, depending on \code{stop_on_out_of_bound}).
-#'
 #' This is exactly the same logic as \code{dicrepancy_continuous_sum()} in EEMtoolbox,
 #' except that the standard EEMtoolbox version does _not_ check for user‐specified
 #' equilibrium bounds.
 #'
-#' @return A list with the same elements as \code{EEMtoolbox::dicrepancy_continuous_sum()}, plus:
-#'   \item{out_of_bound}{Logical scalar. \code{TRUE} if any equilibrium abundances
-#'     lie outside \code{lower_bounds}/\code{upper_bounds}; \code{FALSE} otherwise.}
-#'   \item{bounds_violation_indices}{Integer vector of all species indices that
-#'     violate the specified bounds.}
+#' @examples
+#' out <- EEMtoolbox::EEM(
+#'              interaction_matrix = matrix(c(-1, -1, 1, -1), ncol = 2),
+#'              n_ensemble = 2,
+#'              disc_func = function(data) {
+#'              EEMtoolbox::adapted_discrepancy_continuous_sum(
+#'              data,
+#'              target_lower = rep(1,2),
+#'              target_upper = rep(20,2))})
+#'
+#' @return A list with the same elements as \code{EEMtoolbox::dicrepancy_continuous_sum()}
 #'
 #' @seealso
-#' \code{\link[EEMtoolbox]{dicrepancy_continuous_sum}()} (original function);
-#' \code{\link{add_species_names}()}, \code{\link{select_EEM_outputs}()} (helpers for equilibrium checking).
+#' \code{EEMtoolbox::dicrepancy_continuous_sum()} (original function)
 #'
-#' @examples
-#' \dontrun{
-#'   # (1) Fit with no bounds → behaves identically to the original:
-#'   res1 <- adapted_dicrepancy_continuous_sum(A = A_matrix, r = r_vector, ...)
-#'
-#'   # (2) Specify bounds that exclude a known equilibrium:
-#'   lb <- rep(0.2, ncol(A_matrix))
-#'   ub <- rep(1.5, ncol(A_matrix))
-#'   res2 <- adapted_dicrepancy_continuous_sum(A = A_matrix, r = r_vector,
-#'                                            lower_bounds = lb,
-#'                                            upper_bounds = ub)
-#'   if (res2$out_of_bound) {
-#'     message("One or more species are outside the user‐defined bounds")
-#'   }
-#' }
 #' @export
 adapted_discrepancy_continuous_sum <- function(data,
                                                target_lower = NULL,
