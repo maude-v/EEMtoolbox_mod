@@ -1,4 +1,4 @@
-# EEMtoolbox modification and application
+# EEMtoolbox_MV modification and application
 This package provides a set of functions that propose modifications of the EEMtoolbox package to make its use more flexible and realistic for ecological and evolutionary modeling.
 The modifications include the possibility to simulate systems with more than one non-native species, to set bounds on the systems species equilibrium abundances,
 and to model systems where species introductions can lead to extinction of native species.
@@ -13,7 +13,7 @@ Artificial recruitment as well as species control and removal can also be simula
 - **Species control and removal**: Model species control and removal scenarios.
 
 ## Adapted functions
-- `EEMtoolbox::adapted_dicrepancy_continuous_sum()`: Adapted from `EEMtoolbox::dicrepancy_continuous_sum()` to set bounds on equilibrium abundances.
+- `adapted_dicrepancy_continuous_sum()`: Adapted from `EEMtoolbox::dicrepancy_continuous_sum()` to set bounds on equilibrium abundances.
 - `add_species_names()`: Add names to the species in the system.
 - `select_EEM_outputs()`: Check if the system' is at equilibrium and set bounds on the equilibrium abundances.'s equilibrium abundances are correct, and their disprition within the bounds.
 - `merge_introductions()`: Allow for multiple non-native species introductions.
@@ -38,35 +38,15 @@ install_if_not_installed <- function(package) {
 invisible(lapply(packages_to_install, install_if_not_installed))
 ```
 
-To install the modified EEMtoolbox package, download the repository as a zip file.
-Rename the file as EEMtoolbox_mod.zip, then run the following code
+To install the modified EEMtoolbox_MV package, download the repository as a zip file.
+Rename the file as EEMtoolbox_MV.zip, then run the following code
 ``` r
-devtools::install_local("path_to_file/EEMtoolbox_mod.zip", repos = NULL, type = "win.binary")
+devtools::install_local("path_to_file/EEMtoolbox_MV.zip", repos = NULL, type = "win.binary")
 ```
 
 After installation, load the package with:
 ``` r
-library(EEMtoolbox_mod)
-```
-
-Then, source the adapted functions that are not in the package:
-``` r
-source("path_to_file/adapted functions/add_species_names.R")
-source("path_to_file/adapted functions/select_EEM_outputs.R")
-source("path_to_file/adapted functions/merge_introductions.R")
-source("path_to_file/adapted functions/add_introduced_species.R")
-source("path_to_file/adapted functions/adapted_calculate_projections.R")
-source("path_to_file/adapted functions/adapted_ode_solve.R")
-source("path_to_file/adapted functions/adapted_plot_projections.R")
-```
-
-## Example usage
-Open and run the following RMarkdown files:
-``` r
-file.edit("path_to_file/Application/pre_introduction/initial abundances/initial abundances.Rmd")
-file.edit("path_to_file/Application/pre_introduction/pre_introduction_system.Rmd")
-file.edit("path_to_file/Application/palm_control/palm_control.Rmd")
-file.edit("path_to_file/Application/post_introduction/post_introduction_system.Rmd")
+library(EEMtoolbox_MV)
 ```
 
 # Getting help
