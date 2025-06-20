@@ -1,4 +1,4 @@
-# EEMtoolbox_MV modification and application
+# EEMtoolbox modification and application
 This package provides a set of functions that propose modifications of the EEMtoolbox package to make its use more flexible and realistic for ecological and evolutionary modeling.
 The modifications include the possibility to simulate systems with more than one non-native species, to set bounds on the systems species equilibrium abundances,
 and to model systems where species introductions can lead to extinction of native species.
@@ -38,15 +38,15 @@ install_if_not_installed <- function(package) {
 invisible(lapply(packages_to_install, install_if_not_installed))
 ```
 
-To install the modified EEMtoolbox_MV package, download the repository as a zip file.
-Rename the file as EEMtoolbox_MV.zip, then run the following code
+To install this modified version of the EEMtoolbox package, download the repository as a zip file.
+Rename the file as EEMtoolbox.zip, then run the following code
 ``` r
-devtools::install_local("path_to_file/EEMtoolbox_MV.zip", repos = NULL, type = "win.binary")
+devtools::install_local("path_to_file/EEMtoolbox.zip", repos = NULL, type = "win.binary")
 ```
 
 After installation, load the package with:
 ``` r
-library(EEMtoolbox_MV)
+library(EEMtoolbox)
 ```
 
 # Getting help
