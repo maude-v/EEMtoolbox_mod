@@ -14,10 +14,12 @@ adapted_discrepancy_continuous_sum(
 \item{data}{vector of the equilibrium points followed by the real eigenvalues of the jacobian matrix, as returned by \link[EEMtoolbox]{summarise_ecosystem_features}}
 
 \item{target_lower}{Numeric vector of length p. If provided, these values will
-serve as the minimum allowable equilibrium abundances for each of the p species.}
+serve as the minimum allowable equilibrium abundances for each of the p species.
+See details to see how to scale these variables for them to work.}
 
 \item{target_upper}{Numeric vector of length p. If provided, these values will
-serve as the maximum allowable equilibrium abundances for each of the p species.}
+serve as the maximum allowable equilibrium abundances for each of the p species.
+See details to see how to scale these variables for them to work.}
 }
 \value{
 A list with the same elements as \code{EEMtoolbox::dicrepancy_continuous_sum()}
@@ -30,9 +32,16 @@ This is exactly the same logic as \code{dicrepancy_continuous_sum()} in EEMtoolb
 except that the standard EEMtoolbox version does \emph{not} check for user‐specified
 equilibrium bounds.
 
-\verb{important notice}: numbers in \code{target_lower} and \code{target_upper} are to be
+\verb{important notice}:
+\itemize{
+\item numbers in \code{target_lower} and \code{target_upper} are to be
 inputed directly, and not inside a variable. Otherwise, they are not found by
 the function.
+\item \code{target_upper} and \code{target_lower} must be scaled so max(target_upper) is
+smaller than 1 and min(target_lower) is as large as possible. The scaling
+factor can then be inputed in the rest of the adapted_ functions as
+\code{multiplier}.
+}
 }
 \examples{
 out <- EEMtoolbox::EEM(

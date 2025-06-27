@@ -5,7 +5,8 @@
 #' @param projections A data frame containing the projections of species
 #' abundance.
 #' @param title Title of the plot.
-#' @param multiplier A numeric value to scale the abundance values.
+#' @param multiplier A numeric value to scale the abundance values, should be
+#' the same as the one used when running `EEM`.
 #' @param scaled Logical value indicating whether to scale the y-axis.
 #' @return A ggplot object with the projections of species abundance.
 #' @export
@@ -19,8 +20,8 @@ adapted_plot_projections <- function(projections,
   abundance_eq$pop <- abundance_eq$pop * multiplier
   abundance_eq <- dplyr::summarise(abundance_eq,
                                    median_pop = median(pop),
-                                   upper = max(pop),
-                                   lower = min(pop))
+                                   upper = quantile(pop, 0.975),
+                                   lower = quantile(pop, 0.025))
 
   #basic plot
   if(isTRUE(scaled)) {

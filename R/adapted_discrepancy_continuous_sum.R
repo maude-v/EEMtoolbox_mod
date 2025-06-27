@@ -5,17 +5,24 @@
 #' @inheritParams discrepancy_continuous_sum
 #' @param target_lower Numeric vector of length p. If provided, these values will
 #'   serve as the minimum allowable equilibrium abundances for each of the p species.
+#'   See details to see how to scale these variables for them to work.
 #' @param target_upper Numeric vector of length p. If provided, these values will
 #'   serve as the maximum allowable equilibrium abundances for each of the p species.
+#'   See details to see how to scale these variables for them to work.
 #'
 #' @details
 #' This is exactly the same logic as \code{dicrepancy_continuous_sum()} in EEMtoolbox,
 #' except that the standard EEMtoolbox version does _not_ check for user‐specified
 #' equilibrium bounds.
 #'
-#' `important notice`: numbers in `target_lower` and `target_upper` are to be
+#' `important notice`:
+#' * numbers in `target_lower` and `target_upper` are to be
 #' inputed directly, and not inside a variable. Otherwise, they are not found by
 #' the function.
+#' * `target_upper` and `target_lower` must be scaled so max(target_upper) is
+#' smaller than 1 and min(target_lower) is as large as possible. The scaling
+#' factor can then be inputed in the rest of the adapted_ functions as
+#' `multiplier`.
 #'
 #' @examples
 #' out <- EEMtoolbox::EEM(

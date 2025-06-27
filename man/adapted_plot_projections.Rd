@@ -17,7 +17,8 @@ abundance.}
 
 \item{title}{Title of the plot.}
 
-\item{multiplier}{A numeric value to scale the abundance values.}
+\item{multiplier}{A numeric value to scale the abundance values, should be
+the same as the one used when running \code{EEM}.}
 
 \item{scaled}{Logical value indicating whether to scale the y-axis.}
 }
